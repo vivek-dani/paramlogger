@@ -20,10 +20,10 @@ Please cite this software in your work as:
 
 ```
 @misc{paramlogger-github,
-   author = {Vivek Dani}},
-   title = {{paramlogger: Library that helps logging to file, the inputs parameters and output return values of a method just by adding a decorator on that method.}},
+   author = {Vivek Dani},
+   title = {paramlogger: Library that helps logging to file, the inputs parameters and output return values of a method just by adding a decorator on that method.},
    url = {https://github.com/vivek-dani/paramlogger},
-   version = {0.1.1},
+   version = {0.0.2},
    year = {2024}
 }
 ```

@@ -1,7 +1,7 @@
 class LogLiterals:
     # static variables
     INPUTS = "inputs"
-    OUTPUT = "outputs"
+    OUTPUTS = "outputs"
     META = "meta"
     ID = "id"
     TIMESTAMP = "timestamp"

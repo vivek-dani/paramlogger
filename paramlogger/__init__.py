@@ -3,7 +3,7 @@ __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 from collections import defaultdict
 from datetime import datetime
 from os import makedirs
-from os.path import join
+from os.path import basename, join
 from uuid import uuid4
 
 import paramlogger.file_utils as futil
@@ -71,7 +71,7 @@ class ParamLogger:
             args_to_log = run_method_get_io_dict(method_obj, self.DEL_SELF_ARG, *argv, **kwargs)
             args_to_log[LogLiterals.META][LogLiterals.METHOD_NAME] = method_obj.__name__
             self.CHAINED_LOG.append(args_to_log)
-            return args_to_log[LogLiterals.OUTPUT]
+            return args_to_log[LogLiterals.OUTPUTS]
         return wrap
 
     def log_io_params(self, method_obj, file_name="io_logs"):
@@ -92,7 +92,7 @@ class ParamLogger:
             file_path = join(self.BASE_PATH, file_name + ".jsonl")
             futil.append_as_jsonl(file_path=file_path, args_to_log=args_to_log)
             self.SAMPLE_UNQ_ID = None
-            return args_to_log[LogLiterals.OUTPUT]
+            return args_to_log[LogLiterals.OUTPUTS]
         return wrap
 
     def log_io_params_for_method(self, method_obj):
@@ -111,24 +111,27 @@ class ParamLogger:
             file_path = join(self.BASE_PATH, method_obj.__name__+".jsonl")
             futil.append_as_jsonl(file_path=file_path, args_to_log=args_to_log)
             self.SAMPLE_UNQ_ID = None
-            return args_to_log[LogLiterals.OUTPUT]
+            return args_to_log[LogLiterals.OUTPUTS]
         return wrap
 
     def run_over_logs(self, method_obj):
         """
+        Run the method referenced by method_obj over each entry in jsonl file present at location `file_path`.
+        `id`, `inputs`, `outputs` fields in jsonl file at `file_path` can be accessed via dummy_id, dummy_input,
+        dummy_output parameters respectively.
 
         :param method_obj:
         :return: None
         """
-        def wrap(dummy_id, dummy_input, dummy_output, dummy_meta, **kwargs):
-            file_path = join(self.BASE_PATH, method_obj.__name__ + ".jsonl")
-            eval_file_path = join(self.BASE_PATH, "eval_" + method_obj.__name__ + ".jsonl")
+        def wrap(file_path, dummy_id, dummy_input, dummy_output, dummy_meta, **kwargs):
+            eval_file_path = join(self.BASE_PATH, method_obj.__name__ + "_" + basename(file_path))
             args_to_log = defaultdict(dict)
 
             for json_obj in futil.read_jsonl_row(file_path):
-                eval_result = method_obj(json_obj[LogLiterals.ID],
-                                         json_obj[LogLiterals.INPUT],
-                                         json_obj[LogLiterals.OUTPUT],
+                eval_result = method_obj(None,
+                                         json_obj[LogLiterals.ID],
+                                         json_obj[LogLiterals.INPUTS],
+                                         json_obj[LogLiterals.OUTPUTS],
                                          json_obj[LogLiterals.META],
                                          **kwargs)
                 args_to_log[LogLiterals.ID] = json_obj[LogLiterals.ID]
