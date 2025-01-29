@@ -6,7 +6,7 @@
 This library helps logging to file, the inputs parameters and output return values of a method just by adding a decorator on that method.
 
 ### Usage
-Refer to [./demo.ipynb](./demo.ipynb) for examples on everything that's possible via this library.
+Refer to [./demo.ipynb](https://github.com/vivek-dani/paramlogger/blob/main/demo.ipynb) for examples on everything that's possible via this library.
 
 ### Official source code repo: 
 ```
